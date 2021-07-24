@@ -18,8 +18,8 @@ class Collection(models.Model):
 
 
 class Product(models.Model):
-    sku = models.CharField(max_length=10)
     slug = models.SlugField(default='-')
+    sku = models.CharField(max_length=100, null=True)
     title = models.CharField(max_length=255)
     description = models.TextField()
     unit_price = models.DecimalField(max_digits=6,decimal_places=2)
@@ -27,7 +27,7 @@ class Product(models.Model):
     last_update = models.DateTimeField(auto_now=True)
     collection = models.ForeignKey(Collection, on_delete=models.PROTECT)
     promotions = models.ManyToManyField(Promotion)
-
+   
 
 
 class Customer(models.Model):

@@ -4,10 +4,14 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-django = "*"
-django-debug-toolbar = "*"
-psycopg2 = "*"
+django-debug-toolbar = "==3.2.1"
 psycopg2-binary = "*"
+asgiref = "==3.4.1"
+pytz = "==2021.1"
+sqlparse = "==0.4.1"
+Django = "==3.2.5"
+psycopg2 = "*"
+django-admin-interface = "*"
 
 [dev-packages]
 
