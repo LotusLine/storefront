@@ -1,9 +1,16 @@
 from django.db import models
+from django.core.validators import MinValueValidator
 
 
 class Promotion(models.Model):
     description = models.CharField(max_length=255)
     discount = models.FloatField()
+
+    def __str__(self) -> str:
+        return self.description
+
+    class Meta:
+        ordering = ['description']
 
 
 class Collection(models.Model):
@@ -11,16 +18,38 @@ class Collection(models.Model):
     featured_product = models.ForeignKey(
         'Product', on_delete=models.SET_NULL, null=True, related_name='+')
 
+    #Replace the Generic Object name with the Model title 
+    def __str__(self) -> str:
+        return self.title
+
+    #Sort the list
+
+    class Meta:
+        ordering = ['title']
+
+
 
 class Product(models.Model):
     title = models.CharField(max_length=255)
     slug = models.SlugField()
-    description = models.TextField()
-    unit_price = models.DecimalField(max_digits=6, decimal_places=1)
-    inventory = models.IntegerField()
+    description = models.TextField(null=True, blank=True)
+    unit_price = models.DecimalField(
+        max_digits=6, 
+        decimal_places=1,
+        validators=[MinValueValidator(1)])
+
+    inventory = models.IntegerField(
+        validators=[MinValueValidator(1)])
     last_update = models.DateTimeField(auto_now=True)
     collection = models.ForeignKey(Collection, on_delete=models.PROTECT)
-    promotions = models.ManyToManyField(Promotion)
+    promotions = models.ManyToManyField(Promotion, blank=True)
+
+
+    def __str__(self) -> str:
+        return self.title
+
+    class Meta:
+        ordering = ['title']
 
 
 class Customer(models.Model):
@@ -42,6 +71,17 @@ class Customer(models.Model):
         max_length=1, choices=MEMBERSHIP_CHOICES, default=MEMBERSHIP_BRONZE)
 
 
+    def __str__(self) -> str:
+        return f'{self.first_name} {self.last_name}'
+     
+
+    class Meta:
+        ordering = ['first_name', 'last_name']
+
+
+
+
+
 class Order(models.Model):
     PAYMENT_STATUS_PENDING = 'P'
     PAYMENT_STATUS_COMPLETE = 'C'
@@ -58,11 +98,23 @@ class Order(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.PROTECT)
 
 
+    def __str__(self) -> str:
+        return str(self.payment_status)
+
+    class Meta:
+        ordering = ['payment_status']
+
+
+
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.PROTECT)
     product = models.ForeignKey(Product, on_delete=models.PROTECT)
     quantity = models.PositiveSmallIntegerField()
     unit_price = models.DecimalField(max_digits=6, decimal_places=2)
+
+
+    def __str__(self) -> str:
+        return str(self.order)
 
 
 class Address(models.Model):
